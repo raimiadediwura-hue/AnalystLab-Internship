@@ -1,0 +1,19 @@
+DAX Measures & Date Table
+
+Date = 
+    ADDCOLUMNS(CALENDARAUTO(),
+        "Year",YEAR([Date]),
+        "Quarter", "Q" & QUARTER([Date]),
+        "Month No", MONTH([Date]),
+        "Month Name", FORMAT([Date], "MMM"),
+        "Day", DAY([Date]))
+
+
+Measures 
+
+1. Total Sales = SUM('Superstore dataset'[Sales])
+2. Total Profit = SUM('Superstore dataset'[Profit])
+3. Total Orders = DISTINCTCOUNT('Superstore dataset'[Order ID])
+4. Profit Margin = DIVIDE([Total Profit], [Total Sales], 0)
+5. Average Sales = AVERAGE('Superstore dataset'[Sales])
+6. Quantity Sold = SUM('Superstore dataset'[Quantity])
