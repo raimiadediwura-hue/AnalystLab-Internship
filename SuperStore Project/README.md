@@ -1,4 +1,4 @@
-# Superstore Analytics
+# SuperStore Analytics
 
 ## 1. Project Overview
 
