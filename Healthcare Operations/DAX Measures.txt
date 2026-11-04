@@ -1,0 +1,27 @@
+1. Total Encounter
+	Total Encounter = COUNTROWS(Cleaned_encounters)
+
+2. Unique Patients 
+	Unique Patients = DISTINCTCOUNT(Cleaned_encounters[PATIENT]) 
+
+3. Total Claim Cost 
+	Total Claim Cost = SUM(Cleaned_encounters[TOTAL_CLAIM_COST])
+
+4. Total Payer Coverage 
+	Total Payer Coverage = SUM(Cleaned_encounters[PAYER_COVERAGE]) 
+
+5. Average Claim Cost
+	Average Claim Cost = AVERAGE(Cleaned_encounters[TOTAL_CLAIM_COST])
+
+6. Zero Payer Coverage Encounters
+	Zero Payer Coverage Encounters = 
+	CALCULATE(
+    		COUNTROWS(Cleaned_encounters),
+   		 Cleaned_encounters[PAYER_COVERAGE] = 0
+	)
+
+7. Procedure Frequency 
+	Procedure Frequency = COUNTROWS(Cleaned_procedures)
+
+8. Average Base Cost
+	Average Base Cost = AVERAGE(Cleaned_procedures[BASE_COST])

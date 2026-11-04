@@ -1,0 +1,16 @@
+DateTable 
+
+DateTable = 
+ADDCOLUMNS(
+    CALENDAR(
+        MIN(Cleaned_encounters[START]),
+        MAX(Cleaned_encounters[STOP])
+    ),
+    "Year", YEAR([Date]),
+    "Month", FORMAT([Date], "MMM"),
+    "Month Number", MONTH([Date]),
+    "Quarter", "Q" & FORMAT([Date], "Q"),
+    "Year Quarter",
+        FORMAT([Date], "YYYY") & " Q"
+        & FORMAT([Date], "Q")
+) 
