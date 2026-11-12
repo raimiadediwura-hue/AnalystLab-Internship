@@ -1,0 +1,158 @@
+KPI Development
+
+1. Total complaints: Measures the total number of complaints recorded in the dataset.
+	Total Complaints = DISTINCTCOUNT('Consumer_Complaints'[Complaint ID])
+
+2. Annual Complaints Volume: It measures the number of complaints received each year.
+
+3. Monthly Complaints Volume: It tracks how complaint volumes change from month to month.
+
+4. Complaints by financial product: Identifies which financial products generate the highest number of consumer complaints.
+
+5. Complaints by reported issue: Identifies the most frequently reported problems by consumers.
+
+6. Complaints by sub-product and sub-issue: Provides a more detailed understanding of the specific financial products and problems responsible for complaints.
+
+7. Percentage contribution of each product to total complaints: Measures the proportion of total complaints attributed to each financial product.
+	Product Complaint Percentage = 
+    DIVIDE(
+         [Total Complaints],
+         CALCULATE(
+            [Total Complaints],
+            REMOVEFILTERS(Consumer_Complaints[Product])
+         ),
+         0
+    )
+
+8. Company response category distribution: It shows how companies respond to consumer complaints.
+
+9. Percentage of complaints marked as receiving a timely response: Measures the percentage of complaints that received a response within the expected timeframe, based only on valid Yes and No records.
+Valid Timely Response = 
+    CALCULATE(
+        [Total Complaints],
+        Consumer_Complaints[Timely response?] IN {"Yes", "No"}
+    )
+Timely Complaints = 
+        CALCULATE(
+             [Total Complaints],
+             Consumer_Complaints[Timely response?] = "Yes"
+        )
+Not Timely Complaints = 
+    CALCULATE( 
+        [Total Complaints],
+        Consumer_Complaints[Timely response?] = "No"
+    )
+
+Timely Response % =
+DIVIDE(
+    CALCULATE(
+        [Total Complaints],
+        Complaints[Timely response] = "Yes"
+    ),
+    CALCULATE(
+        [Total Complaints],
+        NOT(ISBLANK(Complaints[Timely response]))
+    ),
+    0
+)
+
+Not Timely Percentage = 
+    DIVIDE(
+        [Not Timely Complaints],
+        [Valid Timely Responses],
+        0
+    )
+Excluded Timely Records = 
+[Timely Complaints] - [Valid Timely Responses]
+
+10. Number of complaints marked In progress: Measures complaints that have not yet reached a completed resolution status.
+	In Progress = 
+    CALCULATE(
+        [Total Complaints],
+        Consumer_Complaints[Company response to consumer] = "In Progress"
+    )
+
+11.  Average and median complaint-forwarding interval: Measures the time taken between the date a complaint was received and the date it was submitted or forwarded to the company.
+	 
+Forwarding Interval = 
+IF(
+    NOT ISBLANK(Consumer_Complaints[Date received]) &&
+    NOT ISBLANK(Consumer_Complaints[Date submitted]) &&
+    Consumer_Complaints[Date submitted] >= Consumer_Complaints[Date received],
+    DATEDIFF(
+        Consumer_Complaints[Date received],
+        Consumer_Complaints[Date submitted],
+        DAY
+    ),
+    BLANK()
+)
+
+Average Forwarding Interval = 
+AVERAGEX(
+    Consumer_Complaints,
+    DATEDIFF(
+        Consumer_Complaints[Date submitted],
+        Consumer_Complaints[Date received],
+        DAY
+    )
+)
+
+Median Forwarding Interval = 
+MEDIANX(
+    Consumer_Complaints,
+    DATEDIFF(
+        Consumer_Complaints[Date submitted],
+        Consumer_Complaints[Date received],
+        DAY
+    )
+)
+
+12. Year-over-year complaint volume changes: Measures the increase or decrease in compliant volume compared with the previous year.
+
+Date Table = 
+ADDCOLUMNS(
+    CALENDAR(
+        MIN(Consumer_Complaints[Date received]),
+        MAX(Consumer_Complaints[Date received])
+    ),
+    "Year", YEAR([Date]),
+    "Month", FORMAT([Date], "MMM"),
+    "Month Number", MONTH([Date]),
+    "Month-Year", FORMAT([Date], "MMM YYYY")
+)
+
+
+Complaint YoY % =
+VAR PrevYearComplaints =
+    CALCULATE(
+        [Total Complaints],
+        SAMEPERIODLASTYEAR('Date Table'[Date])
+    )
+RETURN
+    DIVIDE(
+        [Total Complaints] - PrevYearComplaints,
+        PrevYearComplaints,
+        0
+    )
+
+Previous Year Complaints = 
+CALCULATE(
+    [Total Complaints],
+    SAMEPERIODLASTYEAR('Date Table'[Date])
+)
+
+YoY Complaint Change =
+[Total Complaints] - [Previous Year Complaints]
+
+
+YoY Complaint Change % =
+DIVIDE(
+    [YoY Complaint Change],
+    [Previous Year Complaints],
+    0
+)
+
+
+
+
+ 	
